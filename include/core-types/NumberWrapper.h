@@ -1,7 +1,5 @@
 #ifndef CORETYPES_INT32_H
 #define CORETYPES_INT32_H
-
-#include <cstdint>
 #include <stdfloat>
 #include <type_traits>
 
@@ -54,15 +52,8 @@ public:
         return *this;
     }
 
-    [[nodiscard]] constexpr bool operator==(NumberWrapper& rhs) const
-    {
-        return m_value == rhs.m_value;
-    }
-
-    [[nodiscard]] constexpr bool operator!=(NumberWrapper& rhs) const
-    {
-        return m_value != rhs.m_value;
-    }
+    [[nodiscard]] bool operator<=>(const NumberWrapper&) const
+        = default;
 
     [[nodiscard]] constexpr NumberWrapper operator+(
         NumberWrapper& rhs) const

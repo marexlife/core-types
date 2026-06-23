@@ -1,6 +1,7 @@
 #ifndef CORETYPES_INTDEF_H
 #define CORETYPES_INTDEF_H
 #include "NumberWrapper.h"
+#include <cstdint>
 
 namespace core_types {
 using Uint8 = NumberWrapper<std::uint8_t, class Uint8Tag>;
