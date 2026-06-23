@@ -1,14 +1,14 @@
-#ifndef CORETYPES_INT32_H_
-#define CORETYPES_INT32_H_
+#ifndef CORETYPES_INT32_H
+#define CORETYPES_INT32_H
 
-#include <cmath>
 #include <cstdint>
 #include <stdfloat>
 #include <type_traits>
 
 namespace CoreTypes {
 template <typename WrappedType, typename Tag>
-    requires std::is_arithmetic_v<WrappedType>
+    requires(std::is_arithmetic_v<WrappedType>
+        && std::is_default_constructible_v<WrappedType>)
 class NumberWrapper final {
 public:
     constexpr NumberWrapper(WrappedType value)
@@ -48,49 +48,49 @@ public:
     [[nodiscard]] constexpr NumberWrapper& operator/=(
         NumberWrapper& rhs)
     {
-        this->m_value /= rhs.m_value;
+        m_value /= rhs.m_value;
 
         return *this;
     }
 
     [[nodiscard]] constexpr bool operator==(NumberWrapper& rhs) const
     {
-        return this->m_value == rhs.m_value;
+        return m_value == rhs.m_value;
     }
 
     [[nodiscard]] constexpr bool operator!=(NumberWrapper& rhs) const
     {
-        return this->m_value != rhs.m_value;
+        return m_value != rhs.m_value;
     }
 
     [[nodiscard]] constexpr NumberWrapper operator+(
         NumberWrapper& rhs) const
     {
-        return NumberWrapper(this->m_value + rhs.m_value);
+        return NumberWrapper(m_value + rhs.m_value);
     }
 
     [[nodiscard]] constexpr NumberWrapper operator-(
         NumberWrapper& rhs) const
     {
-        return NumberWrapper(this->m_value + rhs.m_value);
+        return NumberWrapper(m_value + rhs.m_value);
     }
 
     [[nodiscard]] constexpr NumberWrapper operator*(
         NumberWrapper& rhs) const
     {
-        return NumberWrapper(this->m_value * rhs.m_value);
+        return NumberWrapper(m_value * rhs.m_value);
     }
 
     [[nodiscard]] constexpr NumberWrapper operator/(
         NumberWrapper& rhs) const
     {
-        return NumberWrapper(this->m_value / rhs.m_value);
+        return NumberWrapper(m_value / rhs.m_value);
     }
 
     [[nodiscard]] constexpr NumberWrapper& operator=(
         const NumberWrapper& rhs)
     {
-        this->m_value = rhs.m_value;
+        m_value = rhs.m_value;
         return *this;
     }
 
@@ -105,7 +105,7 @@ public:
     }
 
 private:
-    WrappedType m_value;
+    WrappedType m_value { };
 };
 
 using Uint8 = NumberWrapper<std::uint8_t, class Uint8Tag>;
@@ -121,4 +121,4 @@ using Int64 = NumberWrapper<std::int64_t, class Int64Tag>;
 using Float = NumberWrapper<float, class FloatTag>;
 using Double = NumberWrapper<double, class DoubleTag>;
 } // namespace CoreTypes
-#endif // CORETYPES_INT32_H_
+#endif // CORETYPES_INT32_H
