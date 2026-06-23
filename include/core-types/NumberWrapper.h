@@ -1,5 +1,5 @@
-#ifndef CORETYPES_INT32_H
-#define CORETYPES_INT32_H
+#ifndef CORETYPES_NUMBERWRAPPER_H
+#define CORETYPES_NUMBERWRAPPER_H
 #include <stdfloat>
 #include <type_traits>
 
@@ -100,4 +100,4 @@ private:
     WrappedType m_value { };
 };
 } // namespace core_types
-#endif // CORETYPES_INT32_H
+#endif // CORETYPES_NUMBERWRAPPER_H
