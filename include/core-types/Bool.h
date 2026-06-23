@@ -12,6 +12,7 @@ public:
 
     [[nodiscard]] static Bool makeFalse() { return Bool { false }; }
 
+    Bool() = default;
     Bool(Bool&&) = default;
     Bool& operator=(Bool&&) = default;
     Bool(const Bool&) = default;

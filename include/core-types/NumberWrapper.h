@@ -15,11 +15,12 @@ public:
         : m_value(value)
     {
     }
-    ~NumberWrapper() = default;
 
+    NumberWrapper() = default;
     NumberWrapper& operator=(NumberWrapper&&) = default;
     NumberWrapper(const NumberWrapper&) = default;
     NumberWrapper(NumberWrapper&&) = default;
+    ~NumberWrapper() = default;
 
     [[nodiscard]] constexpr NumberWrapper& operator+=(
         NumberWrapper& rhs)
