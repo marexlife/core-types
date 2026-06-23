@@ -1,4 +1,3 @@
 ---
-BasedOnStyle: Microsoft
-PointerAlignment: Left
+BasedOnStyle: WebKit
 ColumnLimit: 70
