@@ -2,6 +2,7 @@
 #define CORETYPES_NUMBERWRAPPER_H
 #include "IntDef.h"
 #include <limits>
+#include <stdexcept>
 #include <stdfloat>
 #include <type_traits>
 
@@ -48,7 +49,7 @@ public:
     [[nodiscard]] constexpr NumberWrapper& operator+=(
         NumberWrapper& rhs)
     {
-        m_value += rhs.m_value;
+        *this += rhs;
 
         return *this;
     }
@@ -56,7 +57,7 @@ public:
     [[nodiscard]] constexpr NumberWrapper& operator-=(
         NumberWrapper& rhs)
     {
-        m_value -= rhs.m_value;
+        *this -= rhs;
 
         return *this;
     }
@@ -64,7 +65,7 @@ public:
     [[nodiscard]] constexpr NumberWrapper& operator*=(
         NumberWrapper& rhs)
     {
-        m_value *= rhs.m_value;
+        *this *= rhs;
 
         return *this;
     }
@@ -74,7 +75,7 @@ public:
     [[nodiscard]] constexpr NumberWrapper& operator/=(
         NumberWrapper& rhs)
     {
-        m_value /= rhs.m_value;
+        *this /= rhs;
 
         return *this;
     }
@@ -85,24 +86,43 @@ public:
     [[nodiscard]] constexpr NumberWrapper operator+(
         NumberWrapper& rhs) const
     {
+        if (std::numeric_limits<WrappedType>::max() - rhs < m_value)
+            [[unlikely]] {
+            throw std::overflow_error("Addition was too big");
+        }
+
         return NumberWrapper(m_value + rhs.m_value);
     }
 
     [[nodiscard]] constexpr NumberWrapper operator-(
         NumberWrapper& rhs) const
     {
+        if (std::numeric_limits<WrappedType>::min() + rhs > m_value)
+            [[unlikely]] {
+            throw std::underflow_error("Subtraction was too big");
+        }
+
         return NumberWrapper(m_value + rhs.m_value);
     }
 
     [[nodiscard]] constexpr NumberWrapper operator*(
         NumberWrapper& rhs) const
     {
+        if (std::numeric_limits<WrappedType>::max() / rhs < m_value)
+            [[unlikely]] {
+            throw std::overflow_error("Multiplication was too big");
+        }
+
         return NumberWrapper(m_value * rhs.m_value);
     }
 
     [[nodiscard]] constexpr NumberWrapper operator/(
         NumberWrapper& rhs) const
     {
+        if (m_value == NumberWrapper { 0 }) [[unlikely]] {
+            throw std::underflow_error("division by zero");
+        }
+
         return NumberWrapper(m_value / rhs.m_value);
     }
 
