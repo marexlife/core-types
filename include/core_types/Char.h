@@ -3,7 +3,7 @@
 namespace core_types {
 class Char final {
 public:
-    explicit Char(char value)
+    explicit constexpr Char(char value)
         : m_value(value)
     {
     }
