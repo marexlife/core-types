@@ -1,6 +1,7 @@
 #ifndef CORETYPES_NUMBERWRAPPER_H
 #define CORETYPES_NUMBERWRAPPER_H
 #include "IntDef.h"
+
 #include <limits>
 #include <stdexcept>
 #include <stdfloat>
