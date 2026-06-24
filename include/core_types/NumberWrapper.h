@@ -1,5 +1,7 @@
 #ifndef CORETYPES_NUMBERWRAPPER_H
 #define CORETYPES_NUMBERWRAPPER_H
+#include "IntDef.h"
+#include <limits>
 #include <stdfloat>
 #include <type_traits>
 
@@ -9,7 +11,9 @@ template <typename WrappedType, typename Tag>
         && std::is_default_constructible_v<WrappedType>)
 class NumberWrapper final {
 public:
-    constexpr NumberWrapper(WrappedType value)
+    using UnderlyingType = WrappedType;
+
+    explicit constexpr NumberWrapper(WrappedType value)
         : m_value(value)
     {
     }
@@ -19,6 +23,27 @@ public:
     NumberWrapper(const NumberWrapper&) = default;
     NumberWrapper(NumberWrapper&&) = default;
     ~NumberWrapper() = default;
+
+    template <typename Fn>
+        requires std::is_invocable_v<Fn,
+            NumberWrapper<WrappedType, Tag>>
+    constexpr static void forLoop(
+        Fn fn, NumberWrapper<WrappedType, Tag> count)
+    {
+        for (NumberWrapper<WrappedType, Tag> i = 0; i < count; ++i) {
+            fn(i);
+        }
+    }
+
+    [[nodiscard]] consteval static Usize max()
+    {
+        return std::numeric_limits<WrappedType>::max();
+    }
+
+    [[nodiscard]] consteval static Usize min()
+    {
+        return std::numeric_limits<WrappedType>::min();
+    }
 
     [[nodiscard]] constexpr NumberWrapper& operator+=(
         NumberWrapper& rhs)
@@ -43,6 +68,8 @@ public:
 
         return *this;
     }
+
+    constexpr void operator++() { ++m_value; }
 
     [[nodiscard]] constexpr NumberWrapper& operator/=(
         NumberWrapper& rhs)
