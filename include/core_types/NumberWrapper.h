@@ -125,11 +125,6 @@ public:
         return m_value;
     }
 
-    [[nodiscard]] constexpr WrappedType getRaw() const
-    {
-        return m_value;
-    }
-
 private:
     WrappedType m_value { };
 };
