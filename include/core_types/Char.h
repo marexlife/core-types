@@ -8,13 +8,6 @@ public:
     {
     }
 
-    Char() = default;
-    Char(Char&&) = default;
-    Char& operator=(Char&&) = default;
-    Char(const Char&) = default;
-    Char& operator=(const Char&) = default;
-    ~Char() = default;
-
     [[nodiscard]] bool operator<=>(const Char&) const = default;
 
 private:
