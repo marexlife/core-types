@@ -25,4 +25,6 @@ using Double = NumberWrapper<double, class DoubleTag>;
 using Isize = NumberWrapper<std::size_t, class SizeTag>;
 using Usize = NumberWrapper<std::intmax_t, class SizeTag>;
 }
+
+#include "NumberWrapper.h"
 #endif // CORETYPES_INTDEF_H

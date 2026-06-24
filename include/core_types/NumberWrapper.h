@@ -1,6 +1,7 @@
 #ifndef CORETYPES_NUMBERWRAPPER_H
 #define CORETYPES_NUMBERWRAPPER_H
 #include "IntDef.h"
+
 #include <limits>
 #include <stdexcept>
 #include <stdfloat>
@@ -18,12 +19,6 @@ public:
         : m_value(value)
     {
     }
-
-    NumberWrapper() = default;
-    NumberWrapper& operator=(NumberWrapper&&) = default;
-    NumberWrapper(const NumberWrapper&) = default;
-    NumberWrapper(NumberWrapper&&) = default;
-    ~NumberWrapper() = default;
 
     template <typename Fn>
         requires std::is_invocable_v<Fn,
@@ -126,19 +121,7 @@ public:
         return NumberWrapper(m_value / rhs.m_value);
     }
 
-    [[nodiscard]] constexpr NumberWrapper& operator=(
-        const NumberWrapper& rhs)
-    {
-        m_value = rhs.m_value;
-        return *this;
-    }
-
     [[nodiscard]] constexpr WrappedType operator*() const
-    {
-        return m_value;
-    }
-
-    [[nodiscard]] constexpr WrappedType getRaw() const
     {
         return m_value;
     }
