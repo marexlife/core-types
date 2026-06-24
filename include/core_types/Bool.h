@@ -1,28 +1,28 @@
 #ifndef CORETYPES_BOOL_H
 #define CORETYPES_BOOL_H
 namespace core_types {
-class Char final {
+class Bool final {
 public:
-    explicit constexpr Char(char value)
+    explicit constexpr Bool(char value)
         : m_value(value)
     {
     }
 
-    [[nodiscard]] static Char makeTrue() { return Char { true }; }
+    [[nodiscard]] static Bool makeTrue() { return Bool { true }; }
 
-    [[nodiscard]] static Char makeFalse() { return Char { false }; }
+    [[nodiscard]] static Bool makeFalse() { return Bool { false }; }
 
-    Char() = default;
-    Char(Char&&) = default;
-    Char& operator=(Char&&) = default;
-    Char(const Char&) = default;
-    Char& operator=(const Char&) = default;
-    ~Char() = default;
+    Bool() = default;
+    Bool(Bool&&) = default;
+    Bool& operator=(Bool&&) = default;
+    Bool(const Bool&) = default;
+    Bool& operator=(const Bool&) = default;
+    ~Bool() = default;
 
     [[nodiscard]] bool isTrue() const { return m_value; }
     [[nodiscard]] bool isFalse() const { return !m_value; }
 
-    [[nodiscard]] bool operator<=>(const Char&) const = default;
+    [[nodiscard]] bool operator<=>(const Bool&) const = default;
 
 private:
     bool m_value { };
