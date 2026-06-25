@@ -39,6 +39,8 @@ public:
     {
     }
 
+    NumberWrapper() = default;
+
     template <typename Fn>
         requires std::is_invocable_v<Fn,
             NumberWrapper<WrappedType, Tag>>

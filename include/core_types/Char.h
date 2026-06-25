@@ -8,6 +8,8 @@ public:
     {
     }
 
+    Char() = default;
+
     [[nodiscard]] bool operator<=>(const Char&) const = default;
 
 private:
