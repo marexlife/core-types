@@ -9,6 +9,8 @@ public:
     {
     }
 
+    Bool() = default;
+
     [[nodiscard]] static Bool makeTrue() { return Bool { true }; }
 
     [[nodiscard]] static Bool makeFalse() { return Bool { false }; }
