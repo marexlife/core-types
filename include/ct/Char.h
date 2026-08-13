@@ -2,18 +2,15 @@
 #define CORETYPES_CHAR_H
 namespace core_types {
 class Char final {
-public:
-    explicit constexpr Char(char value)
-        : m_value(value)
-    {
-    }
+   public:
+    explicit constexpr Char(char value) : value(value) {}
 
     Char() = default;
 
     [[nodiscard]] bool operator<=>(const Char&) const = default;
 
-private:
-    char m_value { };
+   private:
+    char value{};
 };
-}
-#endif // CORETYPES_CHAR_H
+}  // namespace core_types
+#endif  // CORETYPES_CHAR_H

@@ -6,10 +6,10 @@
 #include <stdfloat>
 #include <type_traits>
 
-namespace core_types {
+namespace tps {
 template <typename WrappedType, typename Tag>
-    requires(std::is_arithmetic_v<WrappedType>
-        && std::is_default_constructible_v<WrappedType>)
+    requires(std::is_arithmetic_v<WrappedType> &&
+             std::is_default_constructible_v<WrappedType>)
 class NumberWrapper;
 
 using Uint8 = NumberWrapper<std::uint8_t, class Uint8Tag>;
@@ -28,127 +28,113 @@ using Isize = NumberWrapper<std::size_t, class SizeTag>;
 using Usize = NumberWrapper<std::intmax_t, class SizeTag>;
 
 template <typename WrappedType, typename Tag>
-    requires(std::is_arithmetic_v<WrappedType>
-        && std::is_default_constructible_v<WrappedType>)
+    requires(std::is_arithmetic_v<WrappedType> &&
+             std::is_default_constructible_v<WrappedType>)
 class NumberWrapper final {
-public:
+   public:
     using UnderlyingType = WrappedType;
 
     explicit constexpr NumberWrapper(WrappedType value)
-        : m_value(value)
-    {
-    }
+        : value(value) {}
 
     NumberWrapper() = default;
 
     template <typename Fn>
         requires std::is_invocable_v<Fn,
-            NumberWrapper<WrappedType, Tag>>
+                                     NumberWrapper<WrappedType, Tag>>
     constexpr static void forLoop(
-        Fn fn, NumberWrapper<WrappedType, Tag> count)
-    {
+        Fn fn, NumberWrapper<WrappedType, Tag> count) {
         for (NumberWrapper<WrappedType, Tag> i = 0; i < count; ++i) {
             fn(i);
         }
     }
 
-    [[nodiscard]] consteval static Usize max()
-    {
+    [[nodiscard]] consteval static Usize max() {
         return std::numeric_limits<WrappedType>::max();
     }
 
-    [[nodiscard]] consteval static Usize min()
-    {
+    [[nodiscard]] consteval static Usize min() {
         return std::numeric_limits<WrappedType>::min();
     }
 
     [[nodiscard]] constexpr NumberWrapper& operator+=(
-        NumberWrapper& rhs)
-    {
+        NumberWrapper& rhs) {
         *this += rhs;
 
         return *this;
     }
 
     [[nodiscard]] constexpr NumberWrapper& operator-=(
-        NumberWrapper& rhs)
-    {
+        NumberWrapper& rhs) {
         *this -= rhs;
 
         return *this;
     }
 
     [[nodiscard]] constexpr NumberWrapper& operator*=(
-        NumberWrapper& rhs)
-    {
+        NumberWrapper& rhs) {
         *this *= rhs;
 
         return *this;
     }
 
-    constexpr void operator++() { ++m_value; }
+    constexpr void operator++() { ++value; }
 
     [[nodiscard]] constexpr NumberWrapper& operator/=(
-        NumberWrapper& rhs)
-    {
+        NumberWrapper& rhs) {
         *this /= rhs;
 
         return *this;
     }
 
-    [[nodiscard]] bool operator<=>(const NumberWrapper&) const
-        = default;
+    [[nodiscard]] bool operator<=>(const NumberWrapper&) const =
+        default;
 
     [[nodiscard]] constexpr NumberWrapper operator+(
-        NumberWrapper& rhs) const
-    {
-        if (std::numeric_limits<WrappedType>::max() - rhs < m_value)
+        NumberWrapper& rhs) const {
+        if (std::numeric_limits<WrappedType>::max() - rhs < value)
             [[unlikely]] {
             throw std::overflow_error("Addition was too big");
         }
 
-        return NumberWrapper(m_value + rhs.m_value);
+        return NumberWrapper(value + rhs.value);
     }
 
     [[nodiscard]] constexpr NumberWrapper operator-(
-        NumberWrapper& rhs) const
-    {
-        if (std::numeric_limits<WrappedType>::min() + rhs > m_value)
+        NumberWrapper& rhs) const {
+        if (std::numeric_limits<WrappedType>::min() + rhs > value)
             [[unlikely]] {
             throw std::underflow_error("Subtraction was too big");
         }
 
-        return NumberWrapper(m_value + rhs.m_value);
+        return NumberWrapper(value + rhs.value);
     }
 
     [[nodiscard]] constexpr NumberWrapper operator*(
-        NumberWrapper& rhs) const
-    {
-        if (std::numeric_limits<WrappedType>::max() / rhs < m_value)
+        NumberWrapper& rhs) const {
+        if (std::numeric_limits<WrappedType>::max() / rhs < value)
             [[unlikely]] {
             throw std::overflow_error("Multiplication was too big");
         }
 
-        return NumberWrapper(m_value * rhs.m_value);
+        return NumberWrapper(value * rhs.value);
     }
 
     [[nodiscard]] constexpr NumberWrapper operator/(
-        NumberWrapper& rhs) const
-    {
-        if (m_value == NumberWrapper { 0 }) [[unlikely]] {
+        NumberWrapper& rhs) const {
+        if (value == NumberWrapper{0}) [[unlikely]] {
             throw std::underflow_error("division by zero");
         }
 
-        return NumberWrapper(m_value / rhs.m_value);
+        return NumberWrapper(value / rhs.value);
     }
 
-    [[nodiscard]] constexpr WrappedType operator*() const
-    {
-        return m_value;
+    [[nodiscard]] constexpr WrappedType operator*() const {
+        return value;
     }
 
-private:
-    WrappedType m_value { };
+   private:
+    WrappedType value{};
 };
-} // namespace core_types
-#endif // CORETYPES_NUMBERWRAPPER_H
+}  // namespace tps
+#endif  // CORETYPES_NUMBERWRAPPER_H
