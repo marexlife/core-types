@@ -16,10 +16,13 @@ class Visitor final {
         : objectBytes(), objectHeads() {}
 
     template <typename PushedObjectType, typename... Args>
-        requires std::derived_from<PushedObjectType, ObjectType>
-    void create(Args... args) {
+        requires std::derived_from<PushedObjectType, ObjectType> &&
+                 std::constructible_from<PushedObjectType, Args...>
+    void create(Args... args) noexcept(
+        std::is_nothrow_constructible_v<ObjectType, Args...>) {
         constexpr std::size_t objectSize = sizeof(ObjectType);
         std::byte* rawObjectBytes;
+
         new (rawObjectBytes)
             ObjectType(std::forward<ObjectType>(args)...);
 
@@ -45,7 +48,7 @@ class Visitor final {
         }
     }
 
-    ~Visitor() {
+    ~Visitor() noexcept(std::is_nothrow_constructible_v<ObjectType>) {
         Visitor::forEach(
             [&](ObjectType& object) { object.~ObjectType(); });
     }
