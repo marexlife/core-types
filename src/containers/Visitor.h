@@ -1,37 +1,58 @@
 #ifndef CORETYPES_VISITOR_H
 #define CORETYPES_VISITOR_H
-
+#include <concepts>
 #include <cstddef>
-#include <cstdint>
+#include <functional>
+#include <type_traits>
 #include <vector>
 
 namespace ct {
+template <typename ObjectType>
 class Visitor final {
    public:
-    Visitor() : objectBytes(), objectHeads() {}
+    Visitor() noexcept(
+        std::is_nothrow_constructible_v<decltype(objectBytes)> &&
+        std::is_nothrow_constructible_v<decltype(objectHeads)>)
+        : objectBytes(), objectHeads() {}
 
-    template <typename ObjectType, typename... Args>
-    void push(ObjectType&& object) {
-        
-        objectHeads.emplace_back(sizeof(ObjectType));
-    }
-
-    template <typename ObjectType, typename... Args>
+    template <typename PushedObjectType, typename... Args>
+        requires std::derived_from<PushedObjectType, ObjectType>
     void create(Args... args) {
-        new (objectBytes)
+        constexpr std::size_t objectSize = sizeof(ObjectType);
+        std::byte* rawObjectBytes;
+        new (rawObjectBytes)
             ObjectType(std::forward<ObjectType>(args)...);
 
-        objectHeads.emplace_back(sizeof(ObjectType));
+        for (std::byte* iter = rawObjectBytes;
+             iter != rawObjectBytes + objectSize; ++iter) {
+            objectBytes.emplace_back(*iter);
+        }
+
+        objectHeads.emplace_back(objectSize);
     }
 
-    void forEach() {
+    template <typename IterFunc>
+    void forEach(IterFunc iterFunc) {
+        auto byteIter = objectBytes.begin();
+
         for (auto& objectHead : objectHeads) {
+            auto object =
+                reinterpret_cast<ObjectType&>(*byteIter.base());
+
+            std::invoke(iterFunc, *object);
+
+            byteIter += objectHead;
         }
+    }
+
+    ~Visitor() {
+        Visitor::forEach(
+            [&](ObjectType& object) { object.~ObjectType(); });
     }
 
    private:
     std::vector<std::size_t> objectHeads;
-    std::vector<std::uint8_t> objectBytes;
+    std::vector<std::byte> objectBytes;
 };
 }  // namespace ct
 #endif  // CORETYPES_VISITOR_H

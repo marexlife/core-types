@@ -1,26 +1,31 @@
 #ifndef CORETYPES_DEFER_H
 #define CORETYPES_DEFER_H
-#include <concepts>
+#include <cstdint>
+#include <functional>
 #include <type_traits>
 #include <utility>
+#include <vector>
 
 namespace ct {
 template <typename Functor>
-    requires std::invocable<Functor> &&
-             std::copy_constructible<Functor>
 class Defer final {
    public:
-    explicit Defer(Functor&& functor) noexcept(
+    explicit constexpr Defer(Functor functor) noexcept(
         std::is_nothrow_move_constructible_v<Functor>)
-        : functor(std::move(functor)) {}
+        : functor(std::forward<Functor>(functor)) {}
 
     Defer(Defer&&) = delete;
     Defer& operator=(Defer&&) = delete;
     Defer(const Defer&) = delete;
     Defer& operator=(const Defer&) = delete;
 
-    ~Defer() noexcept(std::is_nothrow_destructible_v<Functor>) =
-        default;
+    constexpr ~Defer() noexcept(
+        std::is_nothrow_destructible_v<Functor> &&
+        std::is_nothrow_invocable_v<Functor>) {
+        std::invoke(functor);
+
+        std::vector<std::int32_t> v;
+    }
 
    private:
     Functor functor;
