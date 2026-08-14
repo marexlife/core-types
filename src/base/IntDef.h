@@ -34,10 +34,12 @@ class NumberWrapper final {
    public:
     using UnderlyingType = WrappedType;
 
-    explicit constexpr NumberWrapper(WrappedType value)
+    explicit constexpr NumberWrapper(WrappedType value) noexcept(
+        std::is_nothrow_copy_constructible_v<WrappedType>)
         : value(value) {}
 
-    NumberWrapper() = default;
+    NumberWrapper() noexcept(
+        std::is_nothrow_destructible_v<WrappedType>) = default;
 
     template <typename Fn>
         requires std::is_invocable_v<Fn,
@@ -49,49 +51,49 @@ class NumberWrapper final {
         }
     }
 
-    [[nodiscard]] consteval static Usize max() {
+    [[nodiscard]] consteval static Usize max() noexcept {
         return std::numeric_limits<WrappedType>::max();
     }
 
-    [[nodiscard]] consteval static Usize min() {
+    [[nodiscard]] consteval static Usize min() noexcept {
         return std::numeric_limits<WrappedType>::min();
     }
 
     [[nodiscard]] constexpr NumberWrapper& operator+=(
-        NumberWrapper& rhs) {
+        NumberWrapper& rhs) noexcept {
         *this += rhs;
 
         return *this;
     }
 
     [[nodiscard]] constexpr NumberWrapper& operator-=(
-        NumberWrapper& rhs) {
+        NumberWrapper& rhs) noexcept {
         *this -= rhs;
 
         return *this;
     }
 
     [[nodiscard]] constexpr NumberWrapper& operator*=(
-        NumberWrapper& rhs) {
+        NumberWrapper& rhs) noexcept {
         *this *= rhs;
 
         return *this;
     }
 
-    constexpr void operator++() { ++value; }
+    constexpr void operator++() noexcept { ++value; }
 
     [[nodiscard]] constexpr NumberWrapper& operator/=(
-        NumberWrapper& rhs) {
+        NumberWrapper& rhs) noexcept {
         *this /= rhs;
 
         return *this;
     }
 
-    [[nodiscard]] bool operator<=>(const NumberWrapper&) const =
-        default;
+    [[nodiscard]] bool operator<=>(
+        const NumberWrapper&) const noexcept = default;
 
     [[nodiscard]] constexpr NumberWrapper operator+(
-        NumberWrapper& rhs) const {
+        NumberWrapper& rhs) const noexcept {
         if (std::numeric_limits<WrappedType>::max() - rhs < value)
             [[unlikely]] {
             throw std::overflow_error("Addition was too big");
@@ -101,7 +103,7 @@ class NumberWrapper final {
     }
 
     [[nodiscard]] constexpr NumberWrapper operator-(
-        NumberWrapper& rhs) const {
+        NumberWrapper& rhs) const noexcept {
         if (std::numeric_limits<WrappedType>::min() + rhs > value)
             [[unlikely]] {
             throw std::underflow_error("Subtraction was too big");
@@ -111,7 +113,7 @@ class NumberWrapper final {
     }
 
     [[nodiscard]] constexpr NumberWrapper operator*(
-        NumberWrapper& rhs) const {
+        NumberWrapper& rhs) const noexcept {
         if (std::numeric_limits<WrappedType>::max() / rhs < value)
             [[unlikely]] {
             throw std::overflow_error("Multiplication was too big");
@@ -121,7 +123,7 @@ class NumberWrapper final {
     }
 
     [[nodiscard]] constexpr NumberWrapper operator/(
-        NumberWrapper& rhs) const {
+        NumberWrapper& rhs) const noexcept {
         if (value == NumberWrapper{0}) [[unlikely]] {
             throw std::underflow_error("division by zero");
         }
@@ -129,7 +131,7 @@ class NumberWrapper final {
         return NumberWrapper(value / rhs.value);
     }
 
-    [[nodiscard]] constexpr WrappedType operator*() const {
+    [[nodiscard]] constexpr WrappedType operator*() const noexcept {
         return value;
     }
 

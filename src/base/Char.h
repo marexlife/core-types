@@ -3,11 +3,12 @@
 namespace core_types {
 class Char final {
    public:
-    explicit constexpr Char(char value) : value(value) {}
+    explicit constexpr Char(char value) noexcept : value(value) {}
 
-    Char() = default;
+    Char() noexcept = default;
 
-    [[nodiscard]] bool operator<=>(const Char&) const = default;
+    [[nodiscard]] bool operator<=>(const Char&) const noexcept =
+        default;
 
    private:
     char value{};

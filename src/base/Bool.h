@@ -4,21 +4,24 @@ namespace ct {
 
 class Bool final {
    public:
-    explicit constexpr Bool(char value) : value(value) {}
+    explicit constexpr Bool(bool value) noexcept : value(value) {}
 
-    Bool() = default;
+    [[nodiscard]] static Bool makeTrue() noexcept {
+        return Bool{true};
+    }
 
-    [[nodiscard]] static Bool makeTrue() { return Bool{true}; }
+    [[nodiscard]] static Bool makeFalse() noexcept {
+        return Bool{false};
+    }
 
-    [[nodiscard]] static Bool makeFalse() { return Bool{false}; }
+    [[nodiscard]] bool isTrue() const noexcept { return value; }
+    [[nodiscard]] bool isFalse() const noexcept { return !value; }
 
-    [[nodiscard]] bool isTrue() const { return value; }
-    [[nodiscard]] bool isFalse() const { return !value; }
-
-    [[nodiscard]] bool operator<=>(const Bool&) const = default;
+    [[nodiscard]] bool operator<=>(const Bool&) const noexcept =
+        default;
 
    private:
-    bool value{};
+    bool value;
 };
 }  // namespace ct
 #endif  // CORETYPES_BOOL_H
