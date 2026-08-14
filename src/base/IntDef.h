@@ -6,7 +6,7 @@
 #include <stdfloat>
 #include <type_traits>
 
-namespace tps {
+namespace ct {
 template <typename WrappedType, typename Tag>
     requires(std::is_arithmetic_v<WrappedType> &&
              std::is_default_constructible_v<WrappedType>)
@@ -136,5 +136,5 @@ class NumberWrapper final {
    private:
     WrappedType value{};
 };
-}  // namespace tps
+}  // namespace ct
 #endif  // CORETYPES_NUMBERWRAPPER_H

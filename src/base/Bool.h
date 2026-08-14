@@ -1,10 +1,10 @@
 #ifndef CORETYPES_BOOL_H
 #define CORETYPES_BOOL_H
-namespace core_types {
+namespace ct {
 
 class Bool final {
    public:
-    explicit constexpr Bool(char value) : m_value(value) {}
+    explicit constexpr Bool(char value) : value(value) {}
 
     Bool() = default;
 
@@ -12,13 +12,13 @@ class Bool final {
 
     [[nodiscard]] static Bool makeFalse() { return Bool{false}; }
 
-    [[nodiscard]] bool isTrue() const { return m_value; }
-    [[nodiscard]] bool isFalse() const { return !m_value; }
+    [[nodiscard]] bool isTrue() const { return value; }
+    [[nodiscard]] bool isFalse() const { return !value; }
 
     [[nodiscard]] bool operator<=>(const Bool&) const = default;
 
    private:
-    bool m_value{};
+    bool value{};
 };
-}  // namespace core_types
+}  // namespace ct
 #endif  // CORETYPES_BOOL_H
