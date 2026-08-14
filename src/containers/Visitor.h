@@ -2,29 +2,23 @@
 #define CORETYPES_VISITOR_H
 #include <concepts>
 #include <cstddef>
-#include <functional>
-#include <type_traits>
 #include <vector>
 
 namespace ct {
 template <typename ObjectType>
 class Visitor final {
    public:
-    Visitor() noexcept(
-        std::is_nothrow_constructible_v<decltype(objectBytes)> &&
-        std::is_nothrow_constructible_v<decltype(objectHeads)>)
-        : objectBytes(), objectHeads() {}
+    Visitor() : objectBytes(), objectHeads() {}
 
     template <typename PushedObjectType, typename... Args>
         requires std::derived_from<PushedObjectType, ObjectType> &&
                  std::constructible_from<PushedObjectType, Args...>
-    void create(Args... args) noexcept(
-        std::is_nothrow_constructible_v<ObjectType, Args...>) {
+    void create(Args... args) {
         constexpr std::size_t objectSize = sizeof(ObjectType);
-        std::byte* rawObjectBytes;
+        std::byte rawObjectBytes[objectSize];
 
         new (rawObjectBytes)
-            ObjectType(std::forward<ObjectType>(args)...);
+            PushedObjectType(std::forward<Args>(args)...);
 
         for (std::byte* iter = rawObjectBytes;
              iter != rawObjectBytes + objectSize; ++iter) {
@@ -34,23 +28,25 @@ class Visitor final {
         objectHeads.emplace_back(objectSize);
     }
 
+    Visitor(Visitor&&) = delete;
+    Visitor& operator=(Visitor&&) = delete;
+    Visitor(const Visitor&) = delete;
+    Visitor& operator=(const Visitor&) = delete;
+
     template <typename IterFunc>
     void forEach(IterFunc iterFunc) {
         auto byteIter = objectBytes.begin();
 
         for (auto& objectHead : objectHeads) {
-            auto object =
-                reinterpret_cast<ObjectType&>(*byteIter.base());
-
-            std::invoke(iterFunc, *object);
+            iterFunc(reinterpret_cast<ObjectType*>(byteIter.base()));
 
             byteIter += objectHead;
         }
     }
 
-    ~Visitor() noexcept(std::is_nothrow_constructible_v<ObjectType>) {
+    ~Visitor() {
         Visitor::forEach(
-            [&](ObjectType& object) { object.~ObjectType(); });
+            [&](ObjectType* object) { object->~ObjectType(); });
     }
 
    private:
