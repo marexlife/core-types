@@ -1,7 +1,6 @@
 #ifndef CORETYPES_BOOL_H
 #define CORETYPES_BOOL_H
 namespace ct {
-
 class Bool final {
    public:
     explicit constexpr Bool(bool value) noexcept : value(value) {}
