@@ -2,6 +2,7 @@
 #define CORETYPES_VISITOR_H
 #include <concepts>
 #include <cstddef>
+#include <cstring>
 #include <vector>
 
 namespace ct {
@@ -15,15 +16,8 @@ class Visitor final {
                  std::constructible_from<PushedObjectType, Args...>
     void create(Args... args) {
         constexpr std::size_t objectSize = sizeof(ObjectType);
-        std::byte rawObjectBytes[objectSize];
-
-        new (rawObjectBytes)
+        new (objectBytes)
             PushedObjectType(std::forward<Args>(args)...);
-
-        for (std::byte* iter = rawObjectBytes;
-             iter != rawObjectBytes + objectSize; ++iter) {
-            objectBytes.emplace_back(*iter);
-        }
 
         objectHeads.emplace_back(objectSize);
     }
@@ -35,10 +29,14 @@ class Visitor final {
 
     template <typename IterFunc>
     void forEach(IterFunc iterFunc) {
-        auto byteIter = objectBytes.begin();
+        std::byte* byteIter = objectBytes;
 
         for (auto& objectHead : objectHeads) {
-            iterFunc(reinterpret_cast<ObjectType*>(byteIter.base()));
+            ObjectType* objectType;
+
+            std::memcpy(objectType, byteIter, objectHead);
+
+            iterFunc(objectType);
 
             byteIter += objectHead;
         }
@@ -51,7 +49,7 @@ class Visitor final {
 
    private:
     std::vector<std::size_t> objectHeads;
-    std::vector<std::byte> objectBytes;
+    std::byte objectBytes[];
 };
 }  // namespace ct
 #endif  // CORETYPES_VISITOR_H
