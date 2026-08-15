@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 project(core_types_containers)
 
+include(${CMAKE_SOURCE_DIR}/cmake/flags.cmake)
 
 set(COMPILE_WARNING_AS_ERROR ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
