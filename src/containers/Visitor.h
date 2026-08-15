@@ -16,9 +16,10 @@ class Visitor final {
                  std::constructible_from<PushedObjectType, Args...>
     void create(Args... args) {
         constexpr std::size_t objectSize = sizeof(ObjectType);
-        new (objectBytes)
+        new (objectBytes + bump)
             PushedObjectType(std::forward<Args>(args)...);
 
+        
         objectHeads.emplace_back(objectSize);
     }
 
@@ -49,6 +50,7 @@ class Visitor final {
 
    private:
     std::vector<std::size_t> objectHeads;
+    std::size_t bump = 0;
     std::byte objectBytes[];
 };
 }  // namespace ct
