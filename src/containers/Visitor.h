@@ -16,7 +16,7 @@ class Visitor final {
         requires std::constructible_from<PushedObjectType, Args...>
     void create(Args... args) {
         constexpr std::size_t objectSize = sizeof(PushedObjectType);
-        new (objectBytes + bump)
+        new (objectBytes)
             PushedObjectType(std::forward<Args>(args)...);
 
         objectHeads.emplace_back(objectSize);
