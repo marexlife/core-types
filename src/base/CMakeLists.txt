@@ -12,7 +12,7 @@ add_library(${PROJECT_NAME}
     base.cpp
 )
 
-target_compile_options(${PROJECT_NAME} PUBLIC
+target_compile_options(${PROJECT_NAME} PRIVATE
     ${CORETYPES_FLAGS}
 )
 

@@ -13,7 +13,7 @@ add_library(${PROJECT_NAME}
     Visitor.cpp
 )
 
-target_compile_options(${PROJECT_NAME} PUBLIC
+target_compile_options(${PROJECT_NAME} PRIVATE
     ${CORETYPES_FLAGS}
 )
 
