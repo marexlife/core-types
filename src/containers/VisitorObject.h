@@ -5,8 +5,13 @@
 
 namespace ct {
 template <typename T>
+class VisitorVector;
+
+template <typename T>
     requires std::movable<T>
 class VisitorObject final {
+    friend VisitorVector<T>;
+
    public:
     explicit VisitorObject(T&& value) : value(std::move(value)) {}
     VisitorObject(VisitorObject&&) = default;

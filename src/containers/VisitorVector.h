@@ -1,9 +1,12 @@
 #ifndef CORETYPES_VISITOR_H
 #define CORETYPES_VISITOR_H
 #include <bit>
+#include <concepts>
 #include <cstddef>
 #include <cstring>
 #include <vector>
+
+#include "VisitorObject.h"
 
 namespace ct {
 template <typename ObjectType>
@@ -19,7 +22,8 @@ class VisitorVector final {
     }
 
     template <typename PushedObjectType>
-    void push(PushedObjectType* object) {
+        requires std::movable<PushedObjectType>
+    void push(VisitorObject<PushedObjectType> object) {
         constexpr std::size_t objectSize = sizeof(PushedObjectType);
         std::byte* bytes = std::bit_cast<std::byte*>(object);
 
