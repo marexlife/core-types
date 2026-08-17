@@ -15,7 +15,7 @@ class VisitorVector final {
     VisitorVector(const VisitorVector&) = delete;
     VisitorVector& operator=(const VisitorVector&) = delete;
     ~VisitorVector() {
-        forEach([&](ObjectType* object) { object->~ObjectType(); });
+        forEach([&](ObjectType& object) { object.~ObjectType(); });
     }
 
     template <typename PushedObjectType>
