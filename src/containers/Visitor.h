@@ -31,6 +31,11 @@ class Visitor final {
         new (newObjectBytes)
             PushedObjectType(std::forward<Args>(args)...);
 
+        for (std::byte* iter = newObjectBytes;
+             iter < newObjectBytes + objectSize; ++iter) {
+            objectBytes.emplace_back(*iter);
+        }
+
         objectHeads.emplace_back(objectSize);
     }
 
