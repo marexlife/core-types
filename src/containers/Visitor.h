@@ -36,7 +36,7 @@ class Visitor final {
 
             std::memcpy(objectStorage, byteIter, objectHead);
 
-            iterFunc(reinterpret_cast<ObjecType*>(objectStorage));
+            iterFunc(reinterpret_cast<ObjecType*>(byteIter));
 
             byteIter += objectHead;
         }
