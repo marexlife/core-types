@@ -1,25 +1,23 @@
 #ifndef CORETYPES_VISITOR_H
 #define CORETYPES_VISITOR_H
-#include <algorithm>
 #include <bit>
 #include <concepts>
 #include <cstddef>
 #include <cstring>
-#include <type_traits>
 #include <vector>
 
 #include "VisitorObject.h"
 
 namespace ct {
 template <typename ObjectType>
-class VisitorVector final {
+class VisitorList final {
    public:
-    VisitorVector() = default;
-    VisitorVector(VisitorVector&&) = delete;
-    VisitorVector& operator=(VisitorVector&&) = delete;
-    VisitorVector(const VisitorVector&) = delete;
-    VisitorVector& operator=(const VisitorVector&) = delete;
-    ~VisitorVector() {
+    VisitorList() = default;
+    VisitorList(VisitorList&&) = delete;
+    VisitorList& operator=(VisitorList&&) = delete;
+    VisitorList(const VisitorList&) = delete;
+    VisitorList& operator=(const VisitorList&) = delete;
+    ~VisitorList() {
         forEach([&](ObjectType& object) { object.~ObjectType(); });
     }
 

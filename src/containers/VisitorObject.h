@@ -5,12 +5,12 @@
 
 namespace ct {
 template <typename T>
-class VisitorVector;
+class VisitorList;
 
 template <typename ThisType, typename BaseType>
     requires std::move_constructible<ThisType>
 class VisitorObject final {
-    friend VisitorVector<BaseType>;
+    friend VisitorList<BaseType>;
 
    public:
     explicit VisitorObject(ThisType&& value)
