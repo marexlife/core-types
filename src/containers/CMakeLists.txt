@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(core_types_containers)
+project(coretypes_containers)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/flags.cmake)
 
