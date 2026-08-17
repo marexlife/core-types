@@ -7,7 +7,7 @@
 #include <vector>
 
 namespace ct {
-template <typename ObjecType>
+template <typename ObjectType>
 class Visitor final {
    public:
     Visitor() : objectHeads(), bump(), objectBytes() {}
@@ -32,11 +32,7 @@ class Visitor final {
         std::byte* byteIter = objectBytes;
 
         for (auto& objectHead : objectHeads) {
-            void* objectStorage = nullptr;
-
-            std::memcpy(objectStorage, byteIter, objectHead);
-
-            iterFunc(reinterpret_cast<ObjecType*>(byteIter));
+            iterFunc(reinterpret_cast<ObjectType*>(byteIter));
 
             byteIter += objectHead;
         }
