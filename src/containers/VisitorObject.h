@@ -23,7 +23,9 @@ class VisitorObject final {
     ~VisitorObject() = default;
 
    private:
-    ThisType thisTypeValue;
+    union {
+        ThisType thisTypeValue;
+    };
 };
 }  // namespace ct
 #endif  // CORETYPES_CONTAINERS_VISITOROBJECT_H
