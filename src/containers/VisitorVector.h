@@ -25,7 +25,7 @@ class VisitorVector final {
         requires std::movable<PushedObjectType>
     void push(VisitorObject<PushedObjectType> object) {
         constexpr std::size_t objectSize = sizeof(PushedObjectType);
-        std::byte* bytes = std::bit_cast<std::byte*>(object);
+        std::byte* bytes = std::bit_cast<std::byte*>(object.value);
 
         for (std::byte* iter = bytes; iter != bytes + objectSize;
              ++iter) {
