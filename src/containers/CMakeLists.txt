@@ -10,7 +10,6 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_library(${PROJECT_NAME}
     containers.cpp
-    Visitor.cpp
 )
 
 target_compile_options(${PROJECT_NAME} PRIVATE
