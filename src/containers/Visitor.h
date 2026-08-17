@@ -1,5 +1,6 @@
 #ifndef CORETYPES_VISITOR_H
 #define CORETYPES_VISITOR_H
+#include <bit>
 #include <concepts>
 #include <cstddef>
 #include <cstring>
@@ -23,16 +24,13 @@ class Visitor final {
         */
     }
 
-    template <typename PushedObjectType, typename... Args>
-        requires std::constructible_from<PushedObjectType, Args...>
-    void create(Args... args) {
+    template <typename PushedObjectType>
+    void push(PushedObjectType* object) {
         constexpr std::size_t objectSize = sizeof(PushedObjectType);
-        std::byte* newObjectBytes = nullptr;
-        new (newObjectBytes)
-            PushedObjectType(std::forward<Args>(args)...);
+        std::byte* bytes = std::bit_cast<std::byte*>(object);
 
-        for (std::byte* iter = newObjectBytes;
-             iter < newObjectBytes + objectSize; ++iter) {
+        for (std::byte* iter = bytes; iter != bytes + objectSize;
+             ++iter) {
             objectBytes.emplace_back(*iter);
         }
 
