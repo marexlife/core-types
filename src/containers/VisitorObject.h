@@ -8,7 +8,7 @@ template <typename T>
 class VisitorVector;
 
 template <typename T>
-    requires std::movable<T>
+    requires std::move_constructible<T>
 class VisitorObject final {
     friend VisitorVector<T>;
 

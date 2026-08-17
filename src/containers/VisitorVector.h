@@ -22,7 +22,7 @@ class VisitorVector final {
     }
 
     template <typename PushedObjectType>
-        requires std::movable<PushedObjectType>
+        requires std::move_constructible<PushedObjectType>
     void push(VisitorObject<PushedObjectType> object) {
         constexpr std::size_t objectSize = sizeof(PushedObjectType);
         std::byte* bytes = std::bit_cast<std::byte*>(object.value);
