@@ -36,7 +36,7 @@ class VisitorVector final {
         auto byteIter = objectBytes.begin().base();
 
         for (auto& objectHead : objectHeads) {
-            iterFunc(reinterpret_cast<ObjectType*>(byteIter));
+            iterFunc(reinterpret_cast<ObjectType&>(*byteIter));
 
             byteIter += objectHead;
         }
