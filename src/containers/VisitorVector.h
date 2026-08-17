@@ -1,9 +1,11 @@
 #ifndef CORETYPES_VISITOR_H
 #define CORETYPES_VISITOR_H
+#include <algorithm>
 #include <bit>
 #include <concepts>
 #include <cstddef>
 #include <cstring>
+#include <type_traits>
 #include <vector>
 
 #include "VisitorObject.h"
@@ -21,11 +23,13 @@ class VisitorVector final {
         forEach([&](ObjectType& object) { object.~ObjectType(); });
     }
 
-    template <typename PushedObjectType>
-        requires std::move_constructible<PushedObjectType>
-    void push(VisitorObject<PushedObjectType> object) {
-        constexpr std::size_t objectSize = sizeof(PushedObjectType);
-        std::byte* bytes = std::bit_cast<std::byte*>(object.value);
+    template <typename ThisType>
+        requires std::move_constructible<ThisType>
+    void push(VisitorObject<ThisType, ObjectType> object) {
+        constexpr std::size_t objectSize = sizeof(ThisType);
+
+        std::byte* bytes =
+            std::bit_cast<std::byte*>(&object.thisTypeValue);
 
         for (std::byte* iter = bytes; iter != bytes + objectSize;
              ++iter) {

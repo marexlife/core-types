@@ -7,13 +7,14 @@ namespace ct {
 template <typename T>
 class VisitorVector;
 
-template <typename T>
-    requires std::move_constructible<T>
+template <typename ThisType, typename BaseType>
+    requires std::move_constructible<ThisType>
 class VisitorObject final {
-    friend VisitorVector<T>;
+    friend VisitorVector<BaseType>;
 
    public:
-    explicit VisitorObject(T&& value) : value(std::move(value)) {}
+    explicit VisitorObject(ThisType&& value)
+        : thisTypeValue(std::move(value)) {}
     VisitorObject(VisitorObject&&) = default;
 
     VisitorObject& operator=(VisitorObject&&) = delete;
@@ -22,7 +23,7 @@ class VisitorObject final {
     ~VisitorObject() = default;
 
    private:
-    T value;
+    ThisType thisTypeValue;
 };
 }  // namespace ct
 #endif  // CORETYPES_CONTAINERS_VISITOROBJECT_H
