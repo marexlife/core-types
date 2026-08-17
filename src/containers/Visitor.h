@@ -1,7 +1,6 @@
 #ifndef CORETYPES_VISITOR_H
 #define CORETYPES_VISITOR_H
 #include <bit>
-#include <concepts>
 #include <cstddef>
 #include <cstring>
 #include <iostream>
@@ -9,19 +8,15 @@
 
 namespace ct {
 template <typename ObjectType>
-class Visitor final {
+class VisitorVector final {
    public:
-    Visitor() = default;
-    Visitor(Visitor&&) = delete;
-    Visitor& operator=(Visitor&&) = delete;
-    Visitor(const Visitor&) = delete;
-    Visitor& operator=(const Visitor&) = delete;
-    ~Visitor() {
-        std::cout << "dtor not implemented yet";
-        /*
-        Visitor::forEach(
-            [&](ObjectType* object) { object->~ObjectType(); });
-        */
+    VisitorVector() = default;
+    VisitorVector(VisitorVector&&) = delete;
+    VisitorVector& operator=(VisitorVector&&) = delete;
+    VisitorVector(const VisitorVector&) = delete;
+    VisitorVector& operator=(const VisitorVector&) = delete;
+    ~VisitorVector() {
+        forEach([&](ObjectType* object) { object->~ObjectType(); });
     }
 
     template <typename PushedObjectType>
