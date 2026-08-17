@@ -3,19 +3,18 @@
 #include <concepts>
 #include <cstddef>
 #include <cstring>
+#include <iostream>
 #include <vector>
 
 namespace ct {
-template <typename ObjectType>
 class Visitor final {
    public:
-    Visitor() : objectBytes(), objectHeads() {}
+    Visitor() : objectHeads(), bump(), objectBytes() {}
 
     template <typename PushedObjectType, typename... Args>
-        requires std::derived_from<PushedObjectType, ObjectType> &&
-                 std::constructible_from<PushedObjectType, Args...>
+        requires std::constructible_from<PushedObjectType, Args...>
     void create(Args... args) {
-        constexpr std::size_t objectSize = sizeof(ObjectType);
+        constexpr std::size_t objectSize = sizeof(PushedObjectType);
         new (objectBytes + bump)
             PushedObjectType(std::forward<Args>(args)...);
 
@@ -32,7 +31,7 @@ class Visitor final {
         std::byte* byteIter = objectBytes;
 
         for (auto& objectHead : objectHeads) {
-            ObjectType* objectType;
+            void* objectType;
 
             std::memcpy(objectType, byteIter, objectHead);
 
@@ -43,8 +42,11 @@ class Visitor final {
     }
 
     ~Visitor() {
+        std::cout << "dtor not implemented yet";
+        /*
         Visitor::forEach(
             [&](ObjectType* object) { object->~ObjectType(); });
+        */
     }
 
    private:
