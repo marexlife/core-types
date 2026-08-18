@@ -16,16 +16,19 @@ class CrtpDispatcher final {
     CrtpDispatcher(const CrtpDispatcher&) = delete;
     CrtpDispatcher& operator=(const CrtpDispatcher&) = delete;
 
-    ~CrtpDispatcher() { CrtpDispatcher::dispatch(); }
-
-    template <typename T>
-        requires requires(T value) { value.getDerived(); }
-    void dispatch(T& value) {
-        CrtpDispatcher::dispatch(value.getDerived());
+    ~CrtpDispatcher() {
+        CrtpDispatcher::dispatchDestruct<BaseType>();
     }
 
     template <typename T>
-    void dispatch(T& value) {
+        requires requires(T value) { value.getDerived(); }
+    void dispatchDestruct(T& value) {
+        CrtpDispatcher::dispatchDestruct<BaseType::DerivedType>(
+            value.getDerived());
+    }
+
+    template <typename T>
+    void dispatchDestruct(T& value) {
         value.~T();
     }
 
